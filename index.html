@@ -11,7 +11,10 @@
     ----------------------------------------------------------------------------
      0 | 11.10.23 | Andre H. Zorek    
        |          | Implementado componentes de frontend com espaço para hidratação de lógica.
-                    Ainda  não funcional
+                    Ainda não funcional
+    ----------------------------------------------------------------------------
+     1 | 12.10.23 | Andre H. Zorek    
+       |          | Implementada toda a lógica do programa e interação com os elementos visuais
     ----------------------------------------------------------------------------
 !-->
 
@@ -32,32 +35,34 @@
   <main class="min-h-screen p-4 grid place-items-center">
     <div class="container max-w-lg flex flex-col gap-8">
       <h1 class="mb-2 text-3xl font-medium leading-none tracking-tight text-gray-900 dark:text-white lg:text-4xl">
-        Verificador de força de senha.</h1>
+        Verificador de força de <span class="font-bold">senha</span></h1>
       <section
         class="px-6 p-10 bg-gray-200/50 border border-gray-200 rounded-2xl shadow dark:bg-gray-800/70 dark:border-gray-700">
-        <form style="--accent-color: orangered; --filled: 60%;">
+        <form style="--accent-color: hsl(215.29999999999995, 25%, 26.7%); --filled: 00%;">
           <div class="mb-6 relative">
             <div class="absolute inset-y-0 right-4 top-9 flex items-center pl-4">
               <button id="togglePasswordVisibility" type="button">
-                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                <svg class="w-6 h-6 text-gray-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                   fill="currentColor" viewBox="0 0 20 14">
                   <path
                     d="M10 0C4.612 0 0 5.336 0 7c0 1.742 3.546 7 10 7 6.454 0 10-5.258 10-7 0-1.664-4.612-7-10-7Zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z" />
                 </svg>
               </button>
             </div>
-            <label for="large-input" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Sua
+            <label for="large-input" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Digite sua
               senha</label>
 
             <input type="password" id="password"
-              class="block w-full p-4 text-gray-900 border border-gray-300 rounded-xl bg-gray-50/50 text-xl focus:outline-none focus:border-[--accent-color] dark:bg-gray-700/80 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[--accent-color] dark:focus:border-[--accent-color]">
+              class="block w-full p-4 text-gray-900 border border-gray-300 rounded-xl bg-gray-50/30 text-xl focus:outline-none focus:border-[--accent-color] dark:bg-gray-700/80 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[--accent-color] dark:focus:border-[--accent-color]">
           </div>
           <div class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Força da sua senha</div>
           <div class="w-full bg-gray-100/50 rounded-full h-2 dark:bg-gray-800/60 mr-2">
-            <div class="bg-[--accent-color] h-2 rounded-lg w-[--filled]"></div>
+            <div class="bg-[--accent-color] h-2 rounded-lg w-[--filled] transition-all duration-500 ease-in-out"></div>
           </div>
-          <p class="mt-2 text-sm text-[--accent-color]"><span class="font-bold">Texto de alerta!</span> Mensagem de
-            complemento.</p>
+          <p class="mt-2 text-sm text-[--accent-color]">
+            <span id="alertTitle" class="font-bold"></span>
+            <span id="alertMessage" class="font-medium"></span>
+          </p>
         </form>
       </section>
     </div>
@@ -97,6 +102,126 @@
       }
       isVisible = !isVisible
     })
+
+    //password strenght color status definitions
+    const colorWeak = 'hsl(0, 73.7%, 41.8%)'
+    const colorModerate = 'hsl(24.600000000000023, 95%, 53.1%)'
+    const colorStrong = 'hsl(160.10000000000002, 84.1%, 39.4%)'
+    const cssVariables = document.querySelector('form')
+
+    //initializes passwordStrengthPoints (int)
+    let passwordStrengthPoints
+
+    document.querySelector('#password').addEventListener('keyup', (e) => {
+      passwordStrengthPoints = 0
+      const passwordAttempt = e.target.value
+
+      //routine: checks for the password length
+      testPasswordLength(passwordAttempt)
+
+      if (hasNumber(passwordAttempt)) {
+        passwordStrengthPoints += 1
+      }
+      if (hasLowercase(passwordAttempt)) {
+        passwordStrengthPoints += 1
+      }
+      if (hasUppercase(passwordAttempt)) {
+        passwordStrengthPoints += 1
+      }
+      if (hasSpecialChars(passwordAttempt)) {
+        passwordStrengthPoints += 2
+      }
+
+      //logs the password total points value and invokes a function to repaint the dom
+      console.log('pontuação da senha é:::', passwordStrengthPoints)
+      updatePasswordStrengthStatus(passwordStrengthPoints)
+
+    })
+
+    //updates color bar filler and info text
+    function updatePasswordStrengthStatus(points) {
+      const alertTitle = document.querySelector('#alertTitle')
+      const alertMessage = document.querySelector('#alertMessage')
+
+      //if weak
+      if (points > 1) {
+        cssVariables.setAttribute('style', `--accent-color: ${colorWeak}; --filled: ${points * 10}%`)
+        alertTitle.innerText = 'Fraca.'
+        alertMessage.innerText = 'Sua senha é muito vulnerável.'
+      }
+      //if moderate
+      if (points >= 5) {
+        cssVariables.setAttribute('style', `--accent-color: ${colorModerate}; --filled: ${points * 10}%`)
+        alertTitle.innerText = 'Moderada.'
+        alertMessage.innerText = 'Sua senha pode melhorar.'
+      }
+      //if strong
+      if (points >= 9) {
+        cssVariables.setAttribute('style', `--accent-color: ${colorStrong}; --filled: ${points * 10}%`)
+        alertTitle.innerText = 'Boa!'
+        alertMessage.innerText = 'Sua senha atinge um bom nível de segurança.'
+      }
+    }
+
+    //checks for password str length
+    function testPasswordLength(str) {
+      if (str.length >= 14) {
+        passwordStrengthPoints += 5
+      }
+      else if (str.length >= 12) {
+        passwordStrengthPoints += 4
+      }
+      else if (str.length >= 10) {
+        passwordStrengthPoints += 3
+      }
+      else if (str.length >= 6) {
+        passwordStrengthPoints += 2
+      }
+      else if (str.length > 1) {
+        passwordStrengthPoints += 1
+      }
+    }
+
+    //checks for number in password str, returns Boolean
+    function hasNumber(str) {
+      for (let i = 0; i < str.length; i++) {
+        if (isNaN(Number(str[i])) === false) {
+          return true
+        }
+      }
+      return false
+    }
+
+    //cheks for uppercase chars, returns Boolean
+    function hasUppercase(str) {
+      for (let i = 0; i < str.length; i++) {
+        if (str[i] >= 'A' && str[i] <= 'Z') {
+          return true
+        }
+      }
+      return false
+    }
+
+    //checks for lowercase chars, returns Boolean
+    function hasLowercase(str) {
+      for (let i = 0; i < str.length; i++) {
+        if (str[i] >= 'a' && str[i] <= 'z') {
+          return true
+        }
+      }
+      return false
+    }
+
+    //checks for special chars, returns Boolean
+    function hasSpecialChars(str) {
+      for (let i = 0; i < str.length; i++) {
+        if (!(str[i] >= 'A' && str[i] <= 'Z') && !(str[i] >= 'a' && str[i] <= 'z') && isNaN(str[i])) {
+          return true
+        }
+      }
+      return false
+    }
+
 
 
   </script>

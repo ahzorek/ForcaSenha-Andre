@@ -1,0 +1,105 @@
+<!--
+    Programa: Verificador de força de senha
+    Descrição:
+    Senhas são um dos pontos de vulnerabilidade mais explorados por criminosos cibernéticos. O motivo disso é simples, eles sabem que muitos usuários são descuidados e criam senhas fáceis de quebrar.   
+    O programa implementa um verificador de força de senha básico, usando como referência conhecidos parâmetros de segurança que aumentam a dificuldade como que algoritmos especializados em hashing tem para decifrar uma determinada senha.
+    Autor: Andre H. Zorek
+    Data: 11.10.2023
+
+    Histórico de Alterações: 
+     V |   Data   | Autor/Descrição 
+    ----------------------------------------------------------------------------
+     0 | 11.10.23 | Andre H. Zorek    
+       |          | Implementado componentes de frontend com espaço para hidratação de lógica.
+                    Ainda  não funcional
+    ----------------------------------------------------------------------------
+!-->
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>Login</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-200 text-gray-600 dark:bg-gray-900 dark:text-gray-300">
+  <div class="blob"></div>
+  <div class="noise"></div>
+  <main class="min-h-screen p-4 grid place-items-center">
+    <div class="container max-w-lg flex flex-col gap-8">
+      <h1 class="mb-2 text-3xl font-medium leading-none tracking-tight text-gray-900 dark:text-white lg:text-4xl">
+        Verificador de força de senha.</h1>
+      <section
+        class="px-6 p-10 bg-gray-200/50 border border-gray-200 rounded-2xl shadow dark:bg-gray-800/70 dark:border-gray-700">
+        <form style="--accent-color: orangered; --filled: 60%;">
+          <div class="mb-6 relative">
+            <div class="absolute inset-y-0 right-4 top-9 flex items-center pl-4">
+              <button id="togglePasswordVisibility" type="button">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor" viewBox="0 0 20 14">
+                  <path
+                    d="M10 0C4.612 0 0 5.336 0 7c0 1.742 3.546 7 10 7 6.454 0 10-5.258 10-7 0-1.664-4.612-7-10-7Zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z" />
+                </svg>
+              </button>
+            </div>
+            <label for="large-input" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Sua
+              senha</label>
+
+            <input type="password" id="password"
+              class="block w-full p-4 text-gray-900 border border-gray-300 rounded-xl bg-gray-50/50 text-xl focus:outline-none focus:border-[--accent-color] dark:bg-gray-700/80 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[--accent-color] dark:focus:border-[--accent-color]">
+          </div>
+          <div class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Força da sua senha</div>
+          <div class="w-full bg-gray-100/50 rounded-full h-2 dark:bg-gray-800/60 mr-2">
+            <div class="bg-[--accent-color] h-2 rounded-lg w-[--filled]"></div>
+          </div>
+          <p class="mt-2 text-sm text-[--accent-color]"><span class="font-bold">Texto de alerta!</span> Mensagem de
+            complemento.</p>
+        </form>
+      </section>
+    </div>
+  </main>
+  <script type="module">
+    //     O verificador de força de senha se baseia nas seguintes regras:
+    //       - Se a senha tiver mais de 1 caractere - 1 ponto;
+    //       - Se a senha tiver mais de 6 caracteres - 2 pontos;
+    //       - Se a senha tiver 10 ou mais caracteres - 3 pontos;
+    //       - Se a senha tiver 12 ou mais caracteres - 4 pontos;
+    //       - Se a senha tiver 14 ou mais caracteres - 5 pontos;
+    //       - Se a senha contiver pelo menos um número - +1 ponto;
+    //       - Se a senha contiver pelo menos uma letra maiúscula - +1 ponto;
+    //       - Se a senha contiver pelo menos um caractere minusculo - +1 ponto;
+    //       - Se a senha contiver pelo menos um caractere especial(não alfanumérico) - +2 pontos;
+
+    // Total de pontos possíveis: 10.
+    //       - A senha será considerada "Forte" se somar 9 ou mais pontos;
+    //       - A senha será considerada "Moderada" se somar mais de 5 e menos de 9 pontos;
+    //       - A senha será considerada "Fraca" se somar 5 ou menos pontos.
+
+    //import toggle password visibility icons
+    import { iconEyeSlashed, iconEyeFull } from './js/icons.js'
+
+    //handles password field visibility
+    const toggleButton = document.querySelector('#togglePasswordVisibility')
+    let isVisible = false
+
+    toggleButton.addEventListener('click', (e) => {
+      const input = document.querySelector('#password')
+      if (isVisible) {
+        toggleButton.innerHTML = iconEyeFull
+        input.type = 'password'
+      } else {
+        toggleButton.innerHTML = iconEyeSlashed
+        input.type = 'text'
+      }
+      isVisible = !isVisible
+    })
+
+
+  </script>
+</body>
+
+</html>
