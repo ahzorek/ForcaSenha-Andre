@@ -1,0 +1,89 @@
+/* imports */
+/* @import url('../styles/reset.css');
+@import url('../styles/normalize.css'); */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@200&display=swap');
+
+:root {
+  --size: 360px;
+  --speed: 20s;
+  /* --easing: cubic-bezier(0.8, 0.2, 0.2, 0.8); */
+  --easing: linear;
+  --color1: hsla(281, 78%, 55%, 0.8);
+  --color2: hsla(168, 100%, 58%, 0.7);
+  --bg-gradient: linear-gradient(var(--color1), var(--color2));
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+body {
+  font-family: "Noto Sans";
+  /* background-color: rgb(20 20 20);
+  color: rgb(250 250 250); */
+  height: 100svh;
+  overflow: hidden;
+  scrollbar-gutter: stable;
+
+}
+
+.noise {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(../assets/noise.webp);
+  background-size: 7%;
+  opacity: .5;
+  mix-blend-mode: overlay;
+  z-index: -10;
+}
+.blob {
+  position: absolute;
+  right: 0;
+  bottom: 10%;
+  width: var(--size);
+  height: var(--size);
+  filter: blur(calc(var(--size) / 4));
+  background-image: var(--bg-gradient);
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  z-index: -20;
+}
+@media (min-width: 680px) {
+  .blob {
+      --size: 460px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .blob {
+      animation: rotate var(--speed) var(--easing) infinite;
+  }
+
+}
+
+.login-panel {
+  background: rgba( 255, 255, 255, 0.133);
+  color: rgb(255 255 255 / 1);
+  box-shadow: 0 8px 32px 0 rgba( 30, 30, 30, 0.37 );
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: .6rem;
+  border: 1px solid rgba( 255, 255, 255, 0.20 );
+  padding: 1.5rem .5rem .5rem;
+}
+
+/* animação blob */
+  @keyframes rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
