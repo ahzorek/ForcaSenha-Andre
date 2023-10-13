@@ -16,10 +16,6 @@
      1 | 12.10.23 | Andre H. Zorek    
        |          | Implementada toda a lógica do programa e interação com os elementos visuais
     ----------------------------------------------------------------------------
-     2 | 12.10.23 | Andre H. Zorek    
-       |          | Lida com exceções; trata o campo input para que não seja possivel entrar com espaços
-       |          | adiciona textos auxiliares para informar ao usuário como melhorar sua senha
-    ----------------------------------------------------------------------------
 !-->
 
 <!DOCTYPE html>
@@ -41,8 +37,8 @@
       <h1 class="mb-2 text-3xl font-medium leading-none tracking-tight text-gray-900 dark:text-white lg:text-4xl">
         Verificador de força de <span class="font-bold">senha</span></h1>
       <section
-        class="px-6 p-10 bg-gray-200/50 border border-gray-200 min-h-[42svh] flex flex-col items-center justify-center rounded-2xl shadow dark:bg-gray-800/60 dark:border-gray-700">
-        <form class="w-full" style="--accent-color: hsl(217, 9%, 39%); --filled: 00%;">
+        class="px-6 p-10 bg-gray-200/50 border border-gray-200 rounded-2xl shadow dark:bg-gray-800/70 dark:border-gray-700">
+        <form style="--accent-color: hsl(215.29999999999995, 25%, 26.7%); --filled: 00%;">
           <div class="mb-6 relative">
             <div class="absolute inset-y-0 right-4 top-9 flex items-center pl-4">
               <button id="togglePasswordVisibility" type="button">
@@ -59,22 +55,20 @@
             <input type="password" id="password"
               class="block w-full p-4 text-gray-900 border border-gray-300 rounded-xl bg-gray-50/30 text-xl focus:outline-none focus:border-[--accent-color] dark:bg-gray-700/80 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[--accent-color] dark:focus:border-[--accent-color]">
           </div>
-          <!-- <div class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Força da sua senha</div> -->
+          <div class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Força da sua senha</div>
           <div class="w-full bg-gray-100/50 rounded-full h-2 dark:bg-gray-800/60 mr-2">
             <div class="bg-[--accent-color] h-2 rounded-lg w-[--filled] transition-all duration-500 ease-in-out"></div>
           </div>
           <p class="mt-2 text-sm text-[--accent-color]">
             <span id="alertTitle" class="font-bold"></span>
-            <span id="alertMessage" class="font-medium">Digite sua senha e ela será testada.</span>
-          <div id="auxMessage" class="mt-6 text-sm tracking-tight dark:text-gray-300">
-          </div>
+            <span id="alertMessage" class="font-medium"></span>
           </p>
         </form>
       </section>
     </div>
   </main>
   <script type="module">
-    // O verificador de força de senha se baseia nas seguintes regras:
+    //     O verificador de força de senha se baseia nas seguintes regras:
     //       - Se a senha tiver mais de 1 caractere - 1 ponto;
     //       - Se a senha tiver mais de 6 caracteres - 2 pontos;
     //       - Se a senha tiver 10 ou mais caracteres - 3 pontos;
@@ -92,11 +86,6 @@
 
     //import toggle password visibility icons
     import { iconEyeSlashed, iconEyeFull } from './js/icons.js'
-    import printArrayToString from './js/printArrayToString.js'
-
-    document.querySelector('form').addEventListener('submit', (e) => {
-      e.preventDefault()
-    })
 
     //handles password field visibility
     const toggleButton = document.querySelector('#togglePasswordVisibility')
@@ -118,46 +107,34 @@
     const colorWeak = 'hsl(0, 73.7%, 41.8%)'
     const colorModerate = 'hsl(24.600000000000023, 95%, 53.1%)'
     const colorStrong = 'hsl(160.10000000000002, 84.1%, 39.4%)'
-    const injectVariablesLocation = document.querySelector('form')
+    const cssVariables = document.querySelector('form')
 
     //initializes passwordStrengthPoints (int)
     let passwordStrengthPoints
-    let auxMessageArray
 
     document.querySelector('#password').addEventListener('keyup', (e) => {
-      e.target.value = e.target.value.trim()
+      passwordStrengthPoints = 0
       const passwordAttempt = e.target.value
 
-      if (passwordAttempt) {
-        //clear password points each time it runs
-        passwordStrengthPoints = 0
+      //routine: checks for the password length
+      testPasswordLength(passwordAttempt)
 
-        //empties aux text array each time it runs
-        auxMessageArray = []
-
-        //routine: checks for the password length
-        testPasswordLength(passwordAttempt)
-
-        if (hasNumber(passwordAttempt)) {
-          passwordStrengthPoints += 1
-        } else auxMessageArray.push('adicionando números')
-
-        if (hasLowercase(passwordAttempt)) {
-          passwordStrengthPoints += 1
-        } else auxMessageArray.push('adicionando caracteres minúsculos')
-
-        if (hasUppercase(passwordAttempt)) {
-          passwordStrengthPoints += 1
-        } else auxMessageArray.push('adicionando caracteres maiúsculos')
-
-        if (hasSpecialChars(passwordAttempt)) {
-          passwordStrengthPoints += 2
-        } else auxMessageArray.push('adicionando caracteres especiais')
-
-        //logs the password total points value and invokes a function to repaint the dom
-        console.log('pontuação da senha é:::', passwordStrengthPoints)
-        updatePasswordStrengthStatus(passwordStrengthPoints)
+      if (hasNumber(passwordAttempt)) {
+        passwordStrengthPoints += 1
       }
+      if (hasLowercase(passwordAttempt)) {
+        passwordStrengthPoints += 1
+      }
+      if (hasUppercase(passwordAttempt)) {
+        passwordStrengthPoints += 1
+      }
+      if (hasSpecialChars(passwordAttempt)) {
+        passwordStrengthPoints += 2
+      }
+
+      //logs the password total points value and invokes a function to repaint the dom
+      console.log('pontuação da senha é:::', passwordStrengthPoints)
+      updatePasswordStrengthStatus(passwordStrengthPoints)
 
     })
 
@@ -165,29 +142,24 @@
     function updatePasswordStrengthStatus(points) {
       const alertTitle = document.querySelector('#alertTitle')
       const alertMessage = document.querySelector('#alertMessage')
-      const auxMessage = document.querySelector('#auxMessage')
-      const auxMessageText = printArrayToString(auxMessageArray)
 
       //if weak
       if (points > 1) {
-        injectVariablesLocation.setAttribute('style', `--accent-color: ${colorWeak}; --filled: ${points * 10}%`)
+        cssVariables.setAttribute('style', `--accent-color: ${colorWeak}; --filled: ${points * 10}%`)
         alertTitle.innerText = 'Fraca.'
         alertMessage.innerText = 'Sua senha é muito vulnerável.'
-        auxMessage.innerText = `Você pode melhorar sua segurança ${auxMessageText}.`
       }
       //if moderate
       if (points >= 5) {
-        injectVariablesLocation.setAttribute('style', `--accent-color: ${colorModerate}; --filled: ${points * 10}%`)
+        cssVariables.setAttribute('style', `--accent-color: ${colorModerate}; --filled: ${points * 10}%`)
         alertTitle.innerText = 'Moderada.'
         alertMessage.innerText = 'Sua senha pode melhorar.'
-        auxMessage.innerText = `Você pode melhorar sua segurança ${auxMessageText}.`
       }
       //if strong
       if (points >= 9) {
-        injectVariablesLocation.setAttribute('style', `--accent-color: ${colorStrong}; --filled: ${points * 10}%`)
+        cssVariables.setAttribute('style', `--accent-color: ${colorStrong}; --filled: ${points * 10}%`)
         alertTitle.innerText = 'Boa!'
         alertMessage.innerText = 'Sua senha atinge um bom nível de segurança.'
-        auxMessage.innerText = ''
       }
     }
 
@@ -201,15 +173,12 @@
       }
       else if (str.length >= 10) {
         passwordStrengthPoints += 3
-        auxMessageArray.push('aumentando o número de caracteres')
       }
       else if (str.length >= 6) {
         passwordStrengthPoints += 2
-        auxMessageArray.push('aumentando o número de caracteres')
       }
-      else {
+      else if (str.length > 1) {
         passwordStrengthPoints += 1
-        auxMessageArray.push('aumentando o número de caracteres')
       }
     }
 
@@ -252,6 +221,8 @@
       }
       return false
     }
+
+
 
   </script>
 </body>
