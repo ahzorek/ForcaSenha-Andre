@@ -1,0 +1,110 @@
+.drugelis {
+	position: relative;
+	justify-content: center;
+	display: flex;
+	margin: auto;
+	width: 10rem;
+	height: 10rem;
+}
+
+.flying {
+	position: relative;
+	display: block;
+	top: 10%;
+	left: 20%;
+	transform-style: preserve-3d;
+	transform: rotateX(50deg) rotateY(30deg) rotateZ(-60deg);
+	width: 100px;
+	height: 100px;
+}
+
+.wingLeft,
+.wingRight {
+	position: absolute;
+	display: block;
+}
+
+.wingLeft {
+	animation: moveLeft 0.4s infinite;
+	animation-direction: alternate;
+}
+
+.wingRight {
+	animation: moveRight 0.4s infinite;
+	animation-direction: alternate;
+}
+
+.fly,
+.fly::after {
+		--butterfly_wings: #807eec;
+	background: var(--butterfly_wings);
+	transform-origin: 100% 50%;
+	overflow: hidden;
+	position: absolute;
+	display: block;
+	border-radius: 50% 50% 40% 40%;
+	right: 0;
+	top: 0;
+}
+
+.fly:first-child {
+	height: 1.7em;
+	text-align: center;
+	transform: rotateZ(30deg);
+	width: 2.8em;
+}
+
+.fly:last-child {
+	height: 1.3em;
+	transform: rotateZ(-30deg);
+	width: 2.5em;
+}
+
+@keyframes moveLeft {
+	0% {
+		transform: rotateY(-60deg);
+	}
+
+	100% {
+		transform: rotateY(60deg);
+	}
+}
+
+@keyframes moveRight {
+	0% {
+		transform: rotateY(170deg);
+	}
+
+	100% {
+		transform: rotateY(70deg);
+	}
+}
+
+.flying {
+	position: absolute;
+	display: block;
+	animation: flyHigh 5s infinite ease-in-out;
+	transform-origin: 100%;
+}
+
+@keyframes flyHigh {
+	0% {
+		left: -150px;
+		top: 0px;
+	}
+
+	25% {
+		left: -150px;
+		top: 100px;
+	}
+
+	50% {
+		left: -150px;
+		top: 50px;
+	}
+
+	100% {
+		left: -150px;
+		top: 0px;
+	}
+}

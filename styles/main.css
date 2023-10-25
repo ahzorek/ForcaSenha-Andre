@@ -1,3 +1,5 @@
+@import './drugelis.css';
+
 :root {
   --size: 360px;
   --speed: 20s;
@@ -18,10 +20,19 @@ html {
 }
 
 body {
+  position: relative;
+  height: 100vh;
   height: 100svh;
   overflow: hidden;
   scrollbar-gutter: stable;
 
+}
+
+#frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .noise {

@@ -20,6 +20,9 @@
        |          | Lida com exceções; trata o campo input para que não seja possivel entrar com espaços
        |          | adiciona textos auxiliares para informar ao usuário como melhorar sua senha
     ----------------------------------------------------------------------------
+     3 | 25.10.23 | Andre H. Zorek    
+       |          | implements a thing.
+    ----------------------------------------------------------------------------
 !-->
 
 <!DOCTYPE html>
@@ -28,12 +31,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-  <title>Login</title>
+  <title>Verifador de Força de Senha</title>
   <link rel="stylesheet" href="styles/main.css">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-200 text-gray-600 dark:bg-gray-900 dark:text-gray-300">
+  <div id="frame"></div>
   <div class="blob"></div>
   <div class="noise"></div>
   <main class="min-h-screen p-4 grid place-items-center">
@@ -93,6 +97,8 @@
     //import toggle password visibility icons
     import { iconEyeSlashed, iconEyeFull } from './js/icons.js'
     import printArrayToString from './js/printArrayToString.js'
+    import easterEgg from './js/drugelis.js'
+    const frame = document.querySelector('#frame')
 
     document.querySelector('form').addEventListener('submit', (e) => {
       e.preventDefault()
@@ -124,9 +130,14 @@
     let passwordStrengthPoints
     let auxMessageArray
 
-    document.querySelector('#password').addEventListener('keyup', (e) => {
+
+    const PASSWORD_INPUT = document.querySelector('#password')
+
+    PASSWORD_INPUT.addEventListener('keyup', (e) => {
       e.target.value = e.target.value.trim()
       const passwordAttempt = e.target.value
+
+      easterEgg(frame, passwordAttempt)
 
       if (passwordAttempt) {
         //clear password points each time it runs
@@ -168,26 +179,26 @@
       const auxMessage = document.querySelector('#auxMessage')
       const auxMessageText = printArrayToString(auxMessageArray)
 
-      //if weak
-      if (points > 1) {
-        injectVariablesLocation.setAttribute('style', `--accent-color: ${colorWeak}; --filled: ${points * 10}%`)
-        alertTitle.innerText = 'Fraca.'
-        alertMessage.innerText = 'Sua senha é muito vulnerável.'
-        auxMessage.innerText = `Você pode melhorar sua segurança ${auxMessageText}.`
-      }
-      //if moderate
-      if (points >= 5) {
-        injectVariablesLocation.setAttribute('style', `--accent-color: ${colorModerate}; --filled: ${points * 10}%`)
-        alertTitle.innerText = 'Moderada.'
-        alertMessage.innerText = 'Sua senha pode melhorar.'
-        auxMessage.innerText = `Você pode melhorar sua segurança ${auxMessageText}.`
-      }
       //if strong
       if (points >= 9) {
         injectVariablesLocation.setAttribute('style', `--accent-color: ${colorStrong}; --filled: ${points * 10}%`)
         alertTitle.innerText = 'Boa!'
         alertMessage.innerText = 'Sua senha atinge um bom nível de segurança.'
         auxMessage.innerText = ''
+      }
+      //if moderate
+      else if (points >= 5) {
+        injectVariablesLocation.setAttribute('style', `--accent-color: ${colorModerate}; --filled: ${points * 10}%`)
+        alertTitle.innerText = 'Moderada.'
+        alertMessage.innerText = 'Sua senha pode melhorar.'
+        auxMessage.innerText = `Você pode melhorar sua segurança ${auxMessageText}.`
+      }
+      //if weak
+      else {
+        injectVariablesLocation.setAttribute('style', `--accent-color: ${colorWeak}; --filled: ${points * 10}%`)
+        alertTitle.innerText = 'Fraca.'
+        alertMessage.innerText = 'Sua senha é muito vulnerável.'
+        auxMessage.innerText = `Você pode melhorar sua segurança ${auxMessageText}.`
       }
     }
 
