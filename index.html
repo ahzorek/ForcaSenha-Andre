@@ -23,6 +23,9 @@
      3 | 25.10.23 | Andre H. Zorek    
        |          | implements a thing.
     ----------------------------------------------------------------------------
+     4 | 25.10.23 | Andre H. Zorek    
+       |          | fixes a bug where the password strenght status wouldnt update case user deleted all the input content
+    ----------------------------------------------------------------------------
 !-->
 
 <!DOCTYPE html>
@@ -108,7 +111,7 @@
     const toggleButton = document.querySelector('#togglePasswordVisibility')
     let isVisible = false
 
-    toggleButton.addEventListener('click', (e) => {
+    toggleButton.addEventListener('input', (e) => {
       const input = document.querySelector('#password')
       if (isVisible) {
         toggleButton.innerHTML = iconEyeFull
@@ -137,11 +140,12 @@
       e.target.value = e.target.value.trim()
       const passwordAttempt = e.target.value
 
+      //clear password points each time it runs
+      passwordStrengthPoints = 0
+
       easterEgg(frame, passwordAttempt)
 
       if (passwordAttempt) {
-        //clear password points each time it runs
-        passwordStrengthPoints = 0
 
         //empties aux text array each time it runs
         auxMessageArray = []
@@ -167,8 +171,9 @@
 
         //logs the password total points value and invokes a function to repaint the dom
         console.log('pontuação da senha é:::', passwordStrengthPoints)
-        updatePasswordStrengthStatus(passwordStrengthPoints)
       }
+
+      updatePasswordStrengthStatus(passwordStrengthPoints)
 
     })
 
