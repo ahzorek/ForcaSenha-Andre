@@ -26,9 +26,6 @@
      4 | 25.10.23 | Andre H. Zorek    
        |          | fixes a bug where the password strenght status wouldnt update case user deleted all the input content
     ----------------------------------------------------------------------------
-     5 | 10.11.23 | Andre H. Zorek    
-       |          | fixes a bug where the wrong event type was being listened on the password visibility toggle button
-    ----------------------------------------------------------------------------
 !-->
 
 <!DOCTYPE html>
@@ -114,9 +111,7 @@
     const toggleButton = document.querySelector('#togglePasswordVisibility')
     let isVisible = false
 
-    //fix toggle button (thanks elian)
-    toggleButton.addEventListener('click', (e) => {
-      console.log('password vis toggle');
+    toggleButton.addEventListener('input', (e) => {
       const input = document.querySelector('#password')
       if (isVisible) {
         toggleButton.innerHTML = iconEyeFull
